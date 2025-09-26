@@ -1,0 +1,157 @@
+<template>
+    <template lwc:if={accountRecord}>
+        <lightning-card title="Alef Education School Provisioning Form">
+            <template lwc:if={isLoading}>
+                <div class="branded-spinner">
+                    <lightning-spinner alternative-text="Loading" variant="brand" size="medium">
+                    </lightning-spinner>
+                </div>
+            </template>
+            <div class="slds-align_absolute-center slds-m-around_large">
+                <div class="slds-col slds-size_1-of-1">
+                    <lightning-input class="custom-input" label="School Name" value={accountRecord.name}  disabled="true" data-field="name"></lightning-input><br>
+                    <lightning-combobox name="gender" label="Gender" value={selectedGender} options={genderOptions} onchange={handleGenderChange} data-field="gender"></lightning-combobox>
+                    <lightning-input class="custom-input" label="City" value={accountRecord.billingCity}  disabled="true" data-field="billingCity" ></lightning-input><br>
+                    <lightning-input class="custom-input" label="Account Number" value={accountRecord.accountNumber}  disabled="true" data-field="accountNumber"></lightning-input><br>
+
+
+                    <div class="slds-form-element">
+                        <!-- <label class="slds-form-element__label">Curriculum</label> -->
+                        <lightning-checkbox-group name="curriculum"
+                        label="Curriculum"
+                        options={curriculumOptions}
+                        value={accountRecord.curriculum}
+                        disabled="true"
+                        style="columns: 2;"
+                        data-field="curriculum"></lightning-checkbox-group>
+                    </div>
+
+
+                    <lightning-input class="custom-input" label="Phone Number" placeholder=" " value={accountRecord.phone}  disabled="true" data-field="phone" ></lightning-input><br>
+                    <lightning-input class="custom-input" label="Email Address" placeholder=" " value={accountRecord.email}  disabled="true" data-field="email" ></lightning-input><br>
+                    <lightning-input class="custom-input" label="School Address" placeholder=" " value={accountRecord.billingStreet}  disabled="true" data-field="billingStreet" ></lightning-input><br>
+
+
+                    <template lwc:if={opps.data}>
+                            <lightning-input class="custom-input" label="Authority Organization" placeholder="Authority/Organization" value={opps.data.school} disabled="true" data-field="OppoSchool" ></lightning-input><br>
+                            <lightning-input class="custom-input" label="School Type" placeholder="School type " value={opps.data.type} disabled="true" data-field="OppoType" ></lightning-input><br>
+                            <lightning-input class="custom-input" label="Accademic Year" placeholder="Academic Year" value={opps.data.acyear} disabled="true" data-field="AcademicYear" ></lightning-input><br>
+                            <lightning-input class="custom-input" label="Grade Adjustment" type="checkbox" checked={opps.data.grade} disabled="true" data-field="gradeadjust" ></lightning-input><br>
+                      </template>
+
+
+
+
+                    <!-- <lightning-combobox
+                    name="School Type"
+                    label="School Type"
+                    value={relatedMap.school}
+                    placeholder="Select School Type"
+                    options={SchoolTypeOptions}
+                    onchange={handleSchoolTypeChange}
+                    data-field="schoolType"
+                    ></lightning-combobox>-->
+
+
+                    <!-- <div style="width:600px;"> -->
+                        <table cellspacing="0" cellpadding="0" class="slds-table">
+                            <thead>
+                                <tr>
+                                    <template for:each={columns} for:item="col">
+                                        <th key={col.fieldName}>{col.label}</th>
+                                    </template>
+                                    <template lwc:if={showDeletecontactRowAction}>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Action">Action</div>
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                           
+                            <tbody class="contactsTableBody">
+                                <template for:each={contactsData} for:item="con" for:index="indx">
+                                    <tr key={con.id} data-id={indx}>
+                                        <!--template lwc:if={con.prepop}>
+                                            <td><lightning-input variant="label-hidden" readonly="true" value={con.title}>{con.title}</lightning-input ></td>
+                                        </template-->
+
+
+                                        <td> <lightning-combobox  class ="combo" variant="label-hidden" label="" data-id={con.id} value={con.title} options={roleOptions} onchange={handleContactRowChange} data-field="roles"></lightning-combobox></td>
+                                        <!--td><lightning-input variant="label-hidden" readonly="true" value={con.title}>{con.title}</lightning-input ></td-->
+                                        <td><lightning-input variant="label-hidden" value={con.firstName}  data-id={con.dataidFirstName} onchange={handleContactRowChange}></lightning-input></td>
+                                        <td><lightning-input variant="label-hidden" value={con.lastName} data-id={con.dataidLastName} onchange={handleContactRowChange}></lightning-input></td>
+                                        <td><lightning-input variant="label-hidden" type='email' data-id={con.dataidEmail} value={con.email} onchange={handleContactRowChange}></lightning-input></td>
+                                        <!-- <td>
+                                            <a onclick={handleRemoveRow}>
+                                                <lightning-icon icon-name="utility:delete" size="small" style="margin-top: -4px; margin-right: 0px;" ></lightning-icon>            
+                                                <span class="slds-assistive-text">Delete</span>            
+                                            </a>          
+                                        </td>  -->
+
+
+                                        <template lwc:if={showDeletecontactRowAction}>
+                                            <td>
+                                                <lightning-button-icon icon-name="utility:delete"
+                                                    data-id={indx}
+                                                    alternative-text="Delete"
+                                                    class="slds-m-left_xx-small"
+                                                    onclick={handleRemoveRow}
+                                                    title={deleteIconTitle}>
+                                                </lightning-button-icon>
+                                            </td>
+                                        </template>
+                                        <template lwc:if={con.primary}>  
+                                            <td><lightning-input variant="label-hidden" disabled="true" checked={checked} type='checkbox'  value=True></lightning-input></td>
+                                            </template>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <lightning-button disabled={disableAddRowButton} variant="brand" label="Add Row" title="Add Row" onclick={handleAddRow} class="slds-float_right slds-var-m-around_x-small"></lightning-button>
+                    <!-- </div> -->
+                    <br><br>
+                    <lightning-button variant="brand" label="Download Template" title="Download Template" icon-position="right" icon-name="utility:download" onclick={downloadSchoolTemplate} class="slds-m-left_x-small"></lightning-button>
+                    <br><br>
+                    <div class="slds-form-element">
+                        <lightning-input data-id="schoolTemplate" type="file" label="upload School Template" onchange={saveFileHandle} required accept={acceptedSchoolTemplatefileFormats} message-when-value-missing="Please upload a file" multiple="true"></lightning-input>
+                    
+                    <div class="slds-form-element">
+    <template if:true={schoolTemplateFileNames}>
+        <template for:each={schoolTemplateFileNames} for:item="fileName">
+            <p key={fileName}>{fileName}</p>
+        </template>
+    </template>
+</div>
+
+
+
+
+                    <div class="slds-align_absolute-center slds-m-around_large" style="color:red">
+                        <template lwc:if={showErrorMessage}>
+                            <b>{error}</b>
+                        </template>
+                    </div>
+                    <div class="slds-form-element">
+                        <!--<h3>Terms and Condition</h3><br>-->  
+                        <p>
+                            By accepting this Provisioning Form, you agree to our &nbsp;
+                            <a href="https://www.alefeducation.com/legal" target="_blank">Terms of Service</a>
+                            &nbsp; and &nbsp;
+                            <a href="https://www.alefeducation.com/privacy-promise/" target="_blank">Privacy Promise</a>
+                        </p>    
+                        </div>
+
+
+                    <!-- <lightning-button class="branded-button slds-var-m-around_x-small" variant="brand" label="Confirm" title="Confirm" onclick={submitProvisioning}> </lightning-button> -->
+                </div>
+            </div>
+            <p slot="footer">
+                <lightning-button class="branded-button slds-var-m-around_x-small" variant="brand" label="Confirm" title="Confirm" onclick={submitProvisioning}> </lightning-button>
+            </p>
+        </lightning-card>
+    </template>
+    <template lwc:if={finalStep}>
+        <h2>Thank you! You have successfully submitted the form. You may now close the window!</h2>
+    </template>
+</template>
+
